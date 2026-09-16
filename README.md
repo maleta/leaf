@@ -42,10 +42,11 @@ The DMG is 127 MB and the installed app 310 MB: the Electron runtime baseline
 plus 23 MB of app, most of it shiki's language grammars. That is what rendering
 code, math and diagrams with nothing fetched at runtime costs.
 
-The build is ad-hoc signed, not notarised. A locally built app carries no
-`com.apple.quarantine` flag, so it launches with no Gatekeeper prompt. Copy the
-DMG to another Mac and it will be quarantined there, in which case the first
-launch needs right-click → **Open**.
+The build is neither signed nor notarised. A locally built app carries no
+`com.apple.quarantine` flag, so it launches with no Gatekeeper prompt. A
+downloaded DMG is quarantined: on macOS 13 and 14 the first launch needs
+right-click → **Open**, and from macOS 15 on that bypass is gone, so it takes
+System Settings → Privacy & Security → **Open Anyway**.
 
 To uninstall: delete the app, and `~/Library/Application Support/Leaf`
 (window state and settings).
@@ -67,10 +68,11 @@ To uninstall: delete the app, and `~/Library/Application Support/Leaf`
 
 `⌘B` opens a sidebar listing the folder of the open document: folders first,
 then the files the app can open, then everything else greyed out and inert.
-Each file shows its size. Single-click opens a document, double-click enters a
-folder, and the header carries a button for the parent folder and one that jumps
-back to the folder of the file you have open. Replacing a document with unsaved
-edits asks first.
+Each file shows its size. A single click opens a document or enters a folder, and
+the header carries a button for the parent folder and one that jumps back to the
+folder of the file you have open. Typing jumps to the entry that starts with what
+you typed, the same letter again walks through its matches, and `Space` opens what
+is selected. Replacing a document with unsaved edits asks first.
 
 Each document remembers where you were reading it, for as long as the window
 stays open. Switching back to a file puts you where you left it; a file you have
@@ -125,8 +127,8 @@ git push --follow-tags
 ```
 
 The tag runs electron-builder on a macOS runner and attaches the DMG to a
-GitHub Release. The build is ad-hoc signed, so the release asset is not
-notarised.
+GitHub Release as a draft, which has to be published by hand. The asset is
+neither signed nor notarised.
 
 ### Layout
 
