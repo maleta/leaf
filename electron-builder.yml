@@ -1,0 +1,27 @@
+appId: dev.mlt.leaf
+directories:
+  output: release
+  buildResources: build
+files:
+  # Vite bundles every runtime dependency into out/, so nothing else is needed.
+  - out/**
+  - package.json
+  - '!node_modules/**/*'
+fileAssociations:
+  - ext: [md, markdown, mdown, mkd, mdx]
+    name: Markdown Document
+    description: Markdown Document
+    role: Editor
+    rank: Owner
+mac:
+  icon: build/icon.icns
+  category: public.app-category.productivity
+  target:
+    - target: dmg
+      arch: [arm64]
+  darkModeSupport: true
+  identity: null
+dmg:
+  artifactName: ${productName}-${version}-${arch}.${ext}
+publish:
+  provider: github

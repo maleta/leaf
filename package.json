@@ -1,0 +1,68 @@
+{
+  "name": "leaf",
+  "productName": "Leaf",
+  "version": "0.1.0",
+  "description": "Instant markdown preview and split-screen editor for macOS",
+  "keywords": [
+    "markdown",
+    "preview",
+    "electron",
+    "macos",
+    "editor",
+    "mermaid",
+    "katex",
+    "shiki",
+    "vue"
+  ],
+  "homepage": "https://github.com/maleta/leaf",
+  "bugs": {
+    "url": "https://github.com/maleta/leaf/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maleta/leaf.git"
+  },
+  "type": "module",
+  "main": "./out/main/index.js",
+  "packageManager": "pnpm@10.11.0",
+  "author": "mlt",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "postinstall": "install-electron",
+    "dev": "electron-vite dev",
+    "build": "vue-tsc --noEmit -p tsconfig.web.json && electron-vite build",
+    "start": "electron-vite preview",
+    "dist": "pnpm build && electron-builder --mac",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.node.json",
+    "icon": "bash scripts/make-icon.sh"
+  },
+  "dependencies": {
+    "@codemirror/commands": "^6.11.0",
+    "@codemirror/lang-markdown": "^6.5.2",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/language-data": "^6.5.2",
+    "@codemirror/state": "^6.7.2",
+    "@codemirror/view": "^6.43.10",
+    "@lezer/highlight": "^1.2.3",
+    "@stream-markdown/code": "2.0.0-beta.2",
+    "@stream-markdown/math": "2.0.0-beta.2",
+    "@stream-markdown/mermaid": "2.0.0-beta.2",
+    "codemirror": "^6.0.2",
+    "katex": "^0.18.5",
+    "mermaid": "^11.17.2",
+    "shiki": "^4.4.3",
+    "vue": "^3.5.42",
+    "vue-stream-markdown": "2.0.0-beta.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.0",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "electron": "^44.1.0",
+    "electron-builder": "^26.15.3",
+    "electron-vite": "^5.0.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.2.2",
+    "vue-tsc": "^3.3.11"
+  }
+}

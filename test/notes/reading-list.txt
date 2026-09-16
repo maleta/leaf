@@ -1,0 +1,9 @@
+Reading list
+============
+
+A plain .txt file. The app opens these too, and renders them as markdown,
+which is why this heading is underlined rather than prefixed with #.
+
+- The Elements of Typographic Style
+- The Design of Everyday Things
+- CommonMark spec

@@ -1,0 +1,9 @@
+{
+  "theme": "system",
+  "rendering": "instant",
+  "charsPerSecond": 1200,
+  "fadeIn": true,
+  "caret": false,
+  "textSize": 100,
+  "syncScroll": true
+}

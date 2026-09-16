@@ -1,0 +1,143 @@
+:root {
+  --chrome: #f6f6f7;
+  --chrome-border: #e2e2e5;
+  --surface: #ffffff;
+  --text: #1c1d21;
+  --text-dim: #6d6f78;
+  --accent: #2f6df6;
+  --hover: rgba(0, 0, 0, 0.06);
+  --active: rgba(0, 0, 0, 0.11);
+  --active-hover: rgba(0, 0, 0, 0.17);
+  --accent-hover: #2559d8;
+  --titlebar-height: 46px;
+  --syntax-heading: #1b4ac4;
+  --syntax-strong: #8a4b00;
+  --syntax-code: #0b7a63;
+  --syntax-punct: #8d9099;
+  --tooltip-bg: #32343a;
+  --tooltip-text: #f4f4f6;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --chrome: #1c1e23;
+  --chrome-border: #2e3138;
+  --surface: #16181d;
+  --text: #e6e7ea;
+  --text-dim: #90939c;
+  --accent: #5b8cff;
+  --hover: rgba(255, 255, 255, 0.08);
+  --active: rgba(255, 255, 255, 0.14);
+  --active-hover: rgba(255, 255, 255, 0.22);
+  --accent-hover: #7ba3ff;
+  --syntax-heading: #8fb3ff;
+  --syntax-strong: #e0a860;
+  --syntax-code: #6fd7bd;
+  --syntax-punct: #6f737d;
+  --tooltip-bg: #4a4d55;
+  --tooltip-text: #f4f4f6;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--surface);
+  color: var(--text);
+  font: 13px/1.5 -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+.icon-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 26px;
+  min-width: 26px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: default;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.icon-button:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.icon-button[data-active='true'] {
+  background: var(--active);
+  color: var(--text);
+}
+
+/* Without this the active background would swallow the hover feedback. */
+.icon-button[data-active='true']:hover {
+  background: var(--active-hover);
+}
+
+.icon-button svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* The native `title` tooltip takes seconds to appear on macOS, so draw our own. */
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 50;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
+  font-size: 11.5px;
+  line-height: 1.35;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(-3px);
+  pointer-events: none;
+  transition: opacity 110ms ease, transform 110ms ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+[data-tip]:hover::after {
+  opacity: 1;
+  transform: none;
+  transition-delay: 500ms;
+}
+
+/* Scrollers stay out of the way until used, the way native macOS panes do. */
+.scroller {
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.scroller:hover {
+  scrollbar-color: var(--chrome-border) transparent;
+}
+
+.stream-markdown {
+  background: transparent !important;
+}

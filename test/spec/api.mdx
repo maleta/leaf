@@ -1,0 +1,34 @@
+# Preload API
+
+The `.mdx` extension opens too.
+
+Everything the renderer can do to the filesystem goes through one object
+exposed on `window` by the preload script. There is no direct `fs` access in
+the renderer.
+
+```ts
+interface PreviewApi {
+  openDialog(): Promise<Document | null>
+  read(path: string): Promise<Document>
+  save(path: string, content: string): Promise<void>
+  saveAs(content: string): Promise<string | null>
+  list(dir: string): Promise<DirListing>
+  onDocument(cb: (doc: Document) => void): Unsubscribe
+  onExternalChange(cb: (doc: Document) => void): Unsubscribe
+  onMenu(cb: (cmd: MenuCommand) => void): Unsubscribe
+}
+```
+
+## Errors
+
+Every call rejects with a plain `Error` carrying a message fit to show a
+person. Paths are never included in the message; the caller already knows
+which file it asked for.
+
+## Events
+
+| Event | Fires when |
+| --- | --- |
+| `document` | main opened a file (Finder, dialog, drag) |
+| `external-change` | the watcher saw the open file change on disk |
+| `menu` | a menu item or its shortcut was used |
