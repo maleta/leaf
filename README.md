@@ -12,6 +12,12 @@ into the app, so nothing is fetched from a CDN and everything works offline.
 
 ## Install
 
+macOS 13 or newer on Apple silicon. The build is arm64 only; there is no Intel or
+universal binary.
+
+Download the DMG from the [latest release](https://github.com/maleta/leaf/releases/latest),
+or build it yourself:
+
 ```bash
 pnpm install
 pnpm dist          # -> release/Leaf-0.1.0-arm64.dmg
