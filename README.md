@@ -8,7 +8,7 @@ the same engine that drives streaming LLM output also drives the typewriter mode
 Syntax highlighting (shiki), math (KaTeX) and diagrams (mermaid) are bundled
 into the app, so nothing is fetched from a CDN and everything works offline.
 
-![Leaf opening a Markdown file, split editor, file tree](docs/demo.gif)
+![Leaf showing a JSON tree, JSONL records, a Markdown page and the split editor](docs/demo.gif)
 
 ## Install
 
