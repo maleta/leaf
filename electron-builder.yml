@@ -13,7 +13,7 @@ fileAssociations:
     description: Markdown Document
     role: Editor
     rank: Owner
-  - ext: [txt, text, log, json]
+  - ext: [txt, text, log, json, jsonl]
     name: Text Document
     role: Viewer
     rank: Alternate

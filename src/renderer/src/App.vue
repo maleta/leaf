@@ -296,7 +296,8 @@ onBeforeUnmount(() => disposers.forEach((dispose) => dispose()))
         <PreviewPane
           class="pane"
           :content="previewContent"
-          :verbatim="language !== null"
+          :source="draft"
+          :language="language"
           :is-dark="isDark"
           :streaming="isTyping"
           :settings="settings"

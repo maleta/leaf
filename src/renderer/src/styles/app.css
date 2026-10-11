@@ -2,6 +2,9 @@
   --chrome: #f6f6f7;
   --chrome-border: #e2e2e5;
   --surface: #ffffff;
+  --page-margin: #ebebed;
+  --page-shadow: rgba(0, 0, 0, 0.03);
+  --page-edge: rgba(0, 0, 0, 0.08);
   --text: #1c1d21;
   --text-dim: #6d6f78;
   --accent: #2f6df6;
@@ -23,6 +26,9 @@
   --chrome: #1c1e23;
   --chrome-border: #2e3138;
   --surface: #16181d;
+  --page-margin: #101216;
+  --page-shadow: rgba(0, 0, 0, 0.25);
+  --page-edge: rgba(255, 255, 255, 0.06);
   --text: #e6e7ea;
   --text-dim: #90939c;
   --accent: #5b8cff;
