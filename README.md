@@ -66,7 +66,8 @@ To uninstall: delete the app, and `~/Library/Application Support/Leaf`
 | Text size | `⌘+` / `⌘-` / `⌘0` |
 | New window | `⌘N` |
 
-Besides Markdown, Leaf shows `.txt`, `.text`, `.log`, `.json` and `.jsonl` files
+Besides Markdown, Leaf shows plain-text and data files (`.txt`, `.text`, `.log`,
+`.json`, `.jsonl`, `.yml`, `.yaml`, `.toml`, `.xml`, `.ini`, `.conf` and `.csv`)
 verbatim, as one highlighted block with long lines wrapped. They are listed under
 *Open With* in Finder but Leaf does not claim them as the default app.
 
