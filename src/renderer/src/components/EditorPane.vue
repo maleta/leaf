@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { EditorState, type Extension } from '@codemirror/state'
+import { Compartment, EditorState, type Extension } from '@codemirror/state'
 import { EditorView, keymap, highlightActiveLine, lineNumbers } from '@codemirror/view'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
 import { markdown } from '@codemirror/lang-markdown'
 import { languages } from '@codemirror/language-data'
-import { HighlightStyle, syntaxHighlighting } from '@codemirror/language'
+import { HighlightStyle, LanguageDescription, syntaxHighlighting } from '@codemirror/language'
 import { tags } from '@lezer/highlight'
+import { textLanguage } from '../../../shared/types'
 
-const props = defineProps<{ modelValue: string; isDark: boolean; fontScale: number }>()
+const props = defineProps<{
+  modelValue: string
+  fileName: string
+  isDark: boolean
+  fontScale: number
+}>()
 const emit = defineEmits<{
   'update:modelValue': [value: string]
   ready: [scroller: HTMLElement]
@@ -28,8 +34,28 @@ const highlight = HighlightStyle.define([
   { tag: tags.quote, color: 'var(--text-dim)', fontStyle: 'italic' },
   { tag: tags.list, color: 'var(--syntax-punct)' },
   { tag: tags.strikethrough, textDecoration: 'line-through' },
-  { tag: [tags.processingInstruction, tags.meta], color: 'var(--syntax-punct)' }
+  { tag: [tags.processingInstruction, tags.meta], color: 'var(--syntax-punct)' },
+  { tag: tags.propertyName, color: 'var(--syntax-heading)' },
+  { tag: tags.string, color: 'var(--syntax-code)' },
+  { tag: [tags.number, tags.bool, tags.null], color: 'var(--syntax-strong)' }
 ])
+
+const language = new Compartment()
+
+/** Markdown is bundled; other grammars load on demand, and plain text has none. */
+async function loadLanguage(fileName: string): Promise<Extension> {
+  if (textLanguage(fileName) === null) return markdown({ codeLanguages: languages })
+  const description = LanguageDescription.matchFilename(languages, fileName)
+  return description ? await description.load() : []
+}
+
+async function applyLanguage(): Promise<void> {
+  const fileName = props.fileName
+  const extension = await loadLanguage(fileName)
+  // The file may have changed, or the view been rebuilt, while the grammar loaded.
+  if (!view || fileName !== props.fileName) return
+  view.dispatch({ effects: language.reconfigure(extension) })
+}
 
 const theme = (isDark: boolean): Extension =>
   EditorView.theme(
@@ -69,7 +95,7 @@ function build(): void {
         history(),
         highlightActiveLine(),
         keymap.of([...defaultKeymap, ...historyKeymap]),
-        markdown({ codeLanguages: languages }),
+        language.of([]),
         syntaxHighlighting(highlight),
         EditorView.lineWrapping,
         theme(props.isDark),
@@ -80,12 +106,14 @@ function build(): void {
     })
   })
   emit('ready', view.scrollDOM)
+  void applyLanguage()
 }
 
 onMounted(build)
 onBeforeUnmount(() => view?.destroy())
 
 watch(() => props.isDark, build)
+watch(() => props.fileName, applyLanguage)
 
 watch(
   () => props.modelValue,

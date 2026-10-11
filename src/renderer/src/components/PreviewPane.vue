@@ -13,6 +13,8 @@ onMounted(() => root.value && emit('ready', root.value))
 
 defineProps<{
   content: string
+  /** A plain-text document, rendered as one code block. */
+  verbatim: boolean
   isDark: boolean
   streaming: boolean
   settings: Settings
@@ -30,7 +32,7 @@ const extensions = {
 </script>
 
 <template>
-  <div ref="root" class="preview scroller" :style="{ fontSize: `${settings.fontScale}rem` }">
+  <div ref="root" class="preview scroller" :class="{ verbatim }" :style="{ fontSize: `${settings.fontScale}rem` }">
     <Markdown
       :content="content"
       :mode="streaming ? 'streaming' : 'static'"
@@ -54,5 +56,20 @@ const extensions = {
 .preview :deep(.stream-markdown) {
   max-width: 46rem;
   margin: 0 auto;
+}
+
+.preview.verbatim :deep(pre) {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Out of the text flow, the line number cannot be wrapped away from its line. */
+.preview.verbatim :deep([data-stream-markdown='code-line']) {
+  padding-left: 2rem;
+}
+
+.preview.verbatim :deep([data-stream-markdown='code-line'])::before {
+  position: absolute;
+  left: 0;
 }
 </style>

@@ -9,11 +9,16 @@ function subscribe<T>(channel: string, handler: (payload: T) => void): () => voi
 
 const api = {
   openDialog: (): Promise<void> => ipcRenderer.invoke('doc:open-dialog'),
-  openPath: (filePath: string): Promise<void> => ipcRenderer.invoke('doc:open-path', filePath),
-  reload: (): Promise<Document | null> => ipcRenderer.invoke('doc:reload'),
-  save: (content: string): Promise<string | null> => ipcRenderer.invoke('doc:save', content),
-  saveAs: (content: string): Promise<string | null> => ipcRenderer.invoke('doc:save-as', content),
-  reveal: (): Promise<void> => ipcRenderer.invoke('doc:reveal'),
+  read: (filePath: string): Promise<Document> => ipcRenderer.invoke('doc:read', filePath),
+  restore: (): Promise<{ documents: Document[]; active: string | null }> =>
+    ipcRenderer.invoke('win:restore'),
+  syncTabs: (tabs: string[], active: string | null): Promise<void> =>
+    ipcRenderer.invoke('win:sync-tabs', tabs, active),
+  save: (filePath: string, content: string): Promise<string | null> =>
+    ipcRenderer.invoke('doc:save', filePath, content),
+  saveAs: (filePath: string | null, content: string): Promise<string | null> =>
+    ipcRenderer.invoke('doc:save-as', filePath, content),
+  reveal: (filePath: string): Promise<void> => ipcRenderer.invoke('doc:reveal', filePath),
   listDirectory: (dirPath?: string): Promise<DirListing> => ipcRenderer.invoke('fs:list', dirPath),
   confirmDiscard: (name: string): Promise<boolean> =>
     ipcRenderer.invoke('doc:confirm-discard', name),

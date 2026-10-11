@@ -35,7 +35,8 @@ export function buildMenu(handlers: {
         { label: 'Save As…', accelerator: 'CmdOrCtrl+Shift+S', click: send('save-as') },
         { label: 'Reload from Disk', accelerator: 'CmdOrCtrl+R', click: send('reload-file') },
         { type: 'separator' },
-        { role: 'close' }
+        { label: 'Close Tab', accelerator: 'CmdOrCtrl+W', click: send('close-tab') },
+        { role: 'close', accelerator: 'CmdOrCtrl+Shift+W' }
       ]
     },
     { role: 'editMenu' },
@@ -53,7 +54,18 @@ export function buildMenu(handlers: {
         { role: 'toggleDevTools' }
       ]
     },
-    { role: 'windowMenu' },
+    {
+      role: 'windowMenu',
+      submenu: [
+        { label: 'Show Next Tab', accelerator: 'Ctrl+Tab', click: send('next-tab') },
+        { label: 'Show Previous Tab', accelerator: 'Ctrl+Shift+Tab', click: send('previous-tab') },
+        { type: 'separator' },
+        { role: 'minimize' },
+        { role: 'zoom' },
+        { type: 'separator' },
+        { role: 'front' }
+      ]
+    },
     {
       role: 'help',
       submenu: [

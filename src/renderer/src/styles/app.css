@@ -138,6 +138,7 @@ button {
   scrollbar-color: var(--chrome-border) transparent;
 }
 
-.stream-markdown {
+/* Only the preview's own root: the library's fullscreen views carry the same class and need their background. */
+.preview > .stream-markdown {
   background: transparent !important;
 }

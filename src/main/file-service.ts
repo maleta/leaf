@@ -1,8 +1,8 @@
 import { readFile, writeFile, readdir, stat } from 'node:fs/promises'
 import { watch, type FSWatcher } from 'node:fs'
-import { basename, dirname, extname, join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 import {
-  MARKDOWN_EXTENSIONS,
+  isOpenable,
   type DirEntry,
   type DirListing,
   type Document,
@@ -46,11 +46,11 @@ export function watchDocument(filePath: string, onChange: () => void): () => voi
   }
 }
 
-const KIND_ORDER: Record<EntryKind, number> = { directory: 0, markdown: 1, other: 2 }
+const KIND_ORDER: Record<EntryKind, number> = { directory: 0, document: 1, other: 2 }
 
 function classify(name: string, isDirectory: boolean): EntryKind {
   if (isDirectory) return 'directory'
-  return MARKDOWN_EXTENSIONS.includes(extname(name).slice(1).toLowerCase()) ? 'markdown' : 'other'
+  return isOpenable(name) ? 'document' : 'other'
 }
 
 /** Directories first, then openable documents, then the rest; each block by name. */

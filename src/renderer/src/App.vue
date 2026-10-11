@@ -5,17 +5,34 @@ import PreviewPane from './components/PreviewPane.vue'
 import EditorPane from './components/EditorPane.vue'
 import SettingsPanel from './components/SettingsPanel.vue'
 import FileTree from './components/FileTree.vue'
+import TabBar from './components/TabBar.vue'
 import EmptyState from './components/EmptyState.vue'
 import { useDocument } from './composables/useDocument'
 import { useSettings, type ViewMode } from './composables/useSettings'
 import { useTypewriter } from './composables/useTypewriter'
 import { useSyncScroll } from './composables/useSyncScroll'
 import { useScrollMemory } from './composables/useScrollMemory'
-import type { Document, MenuCommand } from '../../shared/types'
+import { isOpenable, textLanguage, type Document, type MenuCommand } from '../../shared/types'
 
 const settings = useSettings()
-const { path, name, draft, isDirty, conflict, adopt, applyExternal, resolveConflict, save, saveAs, reload } =
-  useDocument()
+const {
+  tabs,
+  path,
+  name,
+  draft,
+  isDirty,
+  conflict,
+  hasTab,
+  isTabDirty,
+  open,
+  activate,
+  close,
+  applyExternal,
+  resolveConflict,
+  save,
+  saveAs,
+  reload
+} = useDocument()
 
 const view = ref<ViewMode>(settings.defaultView)
 const settingsOpen = ref(false)
@@ -30,7 +47,22 @@ const typewriter = useTypewriter(typewriterSource, {
 })
 
 const isTyping = typewriter.isTyping
-const previewContent = computed(() => (isTyping.value ? typewriter.text.value : draft.value))
+const language = computed(() => textLanguage(name.value))
+
+/** A fence longer than any the text itself starts a line with, so nothing inside can close it. */
+function fence(text: string, lang: string): string {
+  const longest = (text.match(/^ {0,3}`{3,}/gm) ?? []).reduce(
+    (max, run) => Math.max(max, run.trim().length),
+    2
+  )
+  const marker = '`'.repeat(longest + 1)
+  return `${marker}${lang}\n${text}\n${marker}`
+}
+
+const previewContent = computed(() => {
+  const text = isTyping.value ? typewriter.text.value : draft.value
+  return language.value ? fence(text, language.value) : text
+})
 
 const systemDark = ref(false)
 const isDark = computed(() =>
@@ -62,20 +94,22 @@ const documentFolder = computed(() =>
   path.value ? path.value.slice(0, path.value.lastIndexOf('/')) : null
 )
 
-/** Replacing the document in place would drop unsaved edits, so ask first. */
+/** The tree swaps the active tab's file; replacing it would drop unsaved edits, so ask first. */
 async function openFromTree(filePath: string): Promise<void> {
   if (filePath === path.value) return
+  if (hasTab(filePath)) return showTab(filePath)
   if (isDirty.value && !(await window.mdPreview.confirmDiscard(name.value))) return
-  await window.mdPreview.openPath(filePath)
+  receive(await window.mdPreview.read(filePath), 'replace')
 }
 
 const openDialog = (): void => void window.mdPreview.openDialog()
-const reveal = (): void => void window.mdPreview.reveal()
+const reveal = (): void => void (path.value && window.mdPreview.reveal(path.value))
 
-function receive(document: Document): void {
+function receive(document: Document, placement: 'tab' | 'replace' = 'tab'): void {
+  if (hasTab(document.path)) return showTab(document.path)
   const isFirstDocument = path.value === null
   scroll.remember(path.value)
-  adopt(document)
+  open(document, placement)
   // Only a window's first document adopts the default layout; picking another
   // file afterwards keeps whatever the user is working in.
   if (isFirstDocument) view.value = settings.defaultView
@@ -83,6 +117,34 @@ function receive(document: Document): void {
   // A typewriter run has to start from the top to be worth watching.
   const willType = settings.renderMode === 'typing' && view.value === 'preview'
   void nextTick(() => scroll.restore(document.path, willType))
+}
+
+/** Switching back to a tab shows it as it was left, so no typing it out again. */
+function showTab(filePath: string): void {
+  if (filePath === path.value) return
+  scroll.remember(path.value)
+  typewriter.skip()
+  activate(filePath)
+  void nextTick(() => scroll.restore(filePath))
+}
+
+async function closeTab(filePath: string): Promise<void> {
+  const tab = tabs.value.find((candidate) => candidate.path === filePath)
+  if (!tab) return
+  if (isTabDirty(tab) && !(await window.mdPreview.confirmDiscard(tab.name))) return
+  scroll.remember(path.value)
+  const wasActive = filePath === path.value
+  if (wasActive) typewriter.skip()
+  close(filePath)
+  const next = path.value
+  if (wasActive && next) void nextTick(() => scroll.restore(next))
+}
+
+function cycleTab(step: number): void {
+  const count = tabs.value.length
+  if (count < 2) return
+  const index = tabs.value.findIndex((tab) => tab.path === path.value)
+  showTab(tabs.value[(index + step + count) % count].path)
 }
 
 function toggleView(): void {
@@ -115,6 +177,9 @@ const COMMANDS: Record<MenuCommand, () => void> = {
   'toggle-split': toggleView,
   'toggle-settings': () => (settingsOpen.value = !settingsOpen.value),
   'toggle-tree': () => (treeOpen.value = !treeOpen.value),
+  'close-tab': () => (path.value ? void closeTab(path.value) : window.close()),
+  'next-tab': () => cycleTab(1),
+  'previous-tab': () => cycleTab(-1),
   'reload-file': () => void reload(),
   'zoom-in': () => adjustFont(0.05),
   'zoom-out': () => adjustFont(-0.05),
@@ -123,10 +188,10 @@ const COMMANDS: Record<MenuCommand, () => void> = {
 
 function onDrop(event: DragEvent): void {
   dragging.value = false
-  const file = event.dataTransfer?.files?.[0]
-  if (!file) return
-  const filePath = window.mdPreview.pathForFile(file)
-  if (filePath) void window.mdPreview.openPath(filePath)
+  for (const file of event.dataTransfer?.files ?? []) {
+    const filePath = window.mdPreview.pathForFile(file)
+    if (filePath && isOpenable(filePath)) void window.mdPreview.read(filePath).then((doc) => receive(doc))
+  }
 }
 
 /** Links inside rendered markdown belong in the user's browser, not this window. */
@@ -152,8 +217,11 @@ onMounted(() => {
   const onScheme = (event: MediaQueryListEvent): boolean => (systemDark.value = event.matches)
   media.addEventListener('change', onScheme)
 
-  // The window may already hold a file (a reload, or the renderer restarting).
-  void window.mdPreview.reload().then((document) => document && receive(document))
+  // The window may already hold files (a reload, or the renderer restarting).
+  void window.mdPreview.restore().then(({ documents, active }) => {
+    documents.forEach((document) => receive(document))
+    if (active) showTab(active)
+  })
 
   disposers = [
     window.mdPreview.onOpened(receive),
@@ -192,6 +260,15 @@ onBeforeUnmount(() => disposers.forEach((dispose) => dispose()))
       @replay="replay"
     />
 
+    <TabBar
+      v-if="tabs.length > 1"
+      :tabs="tabs"
+      :active-path="path"
+      :is-dirty="isTabDirty"
+      @activate="showTab"
+      @close="closeTab"
+    />
+
     <div v-if="conflict" class="banner">
       <span>{{ name }} changed on disk while you had unsaved edits.</span>
       <button @click="resolveConflict('disk')">Use disk version</button>
@@ -211,6 +288,7 @@ onBeforeUnmount(() => disposers.forEach((dispose) => dispose()))
           v-if="view === 'split'"
           v-model="draft"
           class="pane editor-pane"
+          :file-name="name"
           :is-dark="isDark"
           :font-scale="settings.fontScale"
           @ready="onEditorReady"
@@ -218,6 +296,7 @@ onBeforeUnmount(() => disposers.forEach((dispose) => dispose()))
         <PreviewPane
           class="pane"
           :content="previewContent"
+          :verbatim="language !== null"
           :is-dark="isDark"
           :streaming="isTyping"
           :settings="settings"
