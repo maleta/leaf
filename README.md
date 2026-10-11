@@ -66,9 +66,15 @@ To uninstall: delete the app, and `~/Library/Application Support/Leaf`
 | Text size | `⌘+` / `⌘-` / `⌘0` |
 | New window | `⌘N` |
 
-Besides Markdown, Leaf shows `.txt`, `.text`, `.log` and `.json` files verbatim,
-as one highlighted block with long lines wrapped. They are listed under *Open
-With* in Finder but Leaf does not claim them as the default app.
+Besides Markdown, Leaf shows `.txt`, `.text`, `.log`, `.json` and `.jsonl` files
+verbatim, as one highlighted block with long lines wrapped. They are listed under
+*Open With* in Finder but Leaf does not claim them as the default app.
+
+JSON and JSONL open as a collapsible tree instead. A JSON document opens two
+levels deep; JSONL shows one collapsed record per line, with a preview of its
+first fields and a warning on lines that do not parse. `⌥`-click expands or collapses a whole branch, and hovering a row
+offers to copy its path (`build.mac.target[0]`). A JSON file that does not parse
+is shown as highlighted text with the error on top.
 
 Opening a file that is already open in a tab switches to that tab. The tab bar
 appears once a window holds two files.

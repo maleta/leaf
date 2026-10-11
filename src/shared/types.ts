@@ -11,7 +11,8 @@ export const TEXT_EXTENSIONS: Record<string, string> = {
   txt: 'text',
   text: 'text',
   log: 'log',
-  json: 'json'
+  json: 'json',
+  jsonl: 'jsonl'
 }
 
 /** Extensions the app can open. Everything else is listed but not clickable. */
