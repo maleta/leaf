@@ -13,6 +13,10 @@ fileAssociations:
     description: Markdown Document
     role: Editor
     rank: Owner
+  - ext: [txt, text, log, json]
+    name: Text Document
+    role: Viewer
+    rank: Alternate
 mac:
   icon: build/icon.icns
   category: public.app-category.productivity

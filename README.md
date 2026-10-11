@@ -55,7 +55,9 @@ To uninstall: delete the app, and `~/Library/Application Support/Leaf`
 
 | | |
 | --- | --- |
-| Open a file | double-click in Finder, drag onto the window, or `⌘O` |
+| Open a file | double-click in Finder, drag onto the window, or `⌘O`; it opens in a new tab |
+| Close tab / window | `⌘W` / `⇧⌘W` |
+| Next / previous tab | `⌃Tab` / `⌃⇧Tab` |
 | Toggle file tree | `⌘B` |
 | Toggle split editor | `⌘E` |
 | Save / Save As | `⌘S` / `⇧⌘S` |
@@ -63,6 +65,13 @@ To uninstall: delete the app, and `~/Library/Application Support/Leaf`
 | Settings | `⌘,` |
 | Text size | `⌘+` / `⌘-` / `⌘0` |
 | New window | `⌘N` |
+
+Besides Markdown, Leaf shows `.txt`, `.text`, `.log` and `.json` files verbatim,
+as one highlighted block with long lines wrapped. They are listed under *Open
+With* in Finder but Leaf does not claim them as the default app.
+
+Opening a file that is already open in a tab switches to that tab. The tab bar
+appears once a window holds two files.
 
 ### File tree
 
@@ -72,7 +81,8 @@ Each file shows its size. A single click opens a document or enters a folder, an
 the header carries a button for the parent folder and one that jumps back to the
 folder of the file you have open. Typing jumps to the entry that starts with what
 you typed, the same letter again walks through its matches, and `Space` opens what
-is selected. Replacing a document with unsaved edits asks first.
+is selected. A click replaces the document in the current tab; replacing one
+with unsaved edits asks first.
 
 Each document remembers where you were reading it, for as long as the window
 stays open. Switching back to a file puts you where you left it; a file you have

@@ -41,7 +41,7 @@ const atDocumentFolder = computed(() => !props.dir || cwd.value === props.dir)
 
 function activate(entry: DirEntry): void {
   if (entry.kind === 'directory') void load(entry.path)
-  else if (entry.kind === 'markdown') emit('open', entry.path)
+  else if (entry.kind === 'document') emit('open', entry.path)
 }
 
 const TYPE_AHEAD_WINDOW = 1000
