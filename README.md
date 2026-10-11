@@ -20,7 +20,7 @@ or build it yourself:
 
 ```bash
 pnpm install
-pnpm dist          # -> release/Leaf-0.1.0-arm64.dmg
+pnpm dist          # -> release/Leaf-0.2.0-arm64.dmg
 ```
 
 Either double-click the DMG and drag **Leaf** onto the Applications

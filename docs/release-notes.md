@@ -2,14 +2,15 @@
 
 Leaf opens a Markdown file straight from Finder and renders it instantly, with an optional split-screen editor.
 
-### What's in it
+### What's new
 
-- Offline rendering: shiki, KaTeX and mermaid are bundled, nothing is fetched from a CDN
-- Split editor with live preview and synced scrolling
-- Typewriter mode that replays a document as if it were being written
-- File tree with Finder-style type-ahead
-- Scroll position remembered per document, so you land where you left off
-- Registers as a handler for `.md`, `.markdown`, `.mdown`, `.mkd` and `.mdx`
+- JSON and JSONL open as a collapsible tree: values aligned per level, nesting guides, inline previews of collapsed nodes, and a copy button for each value's path (`build.mac.target[0]`)
+- JSONL shows one record per line with its line number and flags lines that do not parse, without hiding the rest of the file
+- `.txt`, `.text`, `.log`, `.yml`, `.yaml`, `.toml`, `.xml`, `.ini`, `.conf` and `.csv` files open as one highlighted block with long lines wrapped
+- Files opened from Finder join the existing window as tabs; `⌘W` closes a tab, `⌃Tab` / `⌃⇧Tab` switch between them
+- Closing a window with unsaved tabs asks before discarding changes
+- The reading column sits as a page on a darker desk, so its width is visible at any window size
+- Leaf appears under *Open With* for all of these formats without claiming them as the default app
 
 ### Install
 
